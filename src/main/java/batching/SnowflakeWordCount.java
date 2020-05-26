@@ -1,5 +1,6 @@
 package batching;
 
+import common.SnowflakeWordCountOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.io.TextIO;
@@ -28,7 +29,7 @@ import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PDone;
 
 /**
- * An example that contains writing and reading from Snowflake inspired by Apache Beam/WordCount-example(https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
+ * An example that contains batch writing and reading from Snowflake. Inspired by Apache Beam/WordCount-example(https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
  *
  * An example consists of two piplines:
  * a) Writing into Snowflake
@@ -42,6 +43,8 @@ import org.apache.beam.sdk.values.PDone;
  * The flow of reading from Snowflake is following:
  * 1. Reading counts from Snowflake
  * 2. Writing counts into output
+ *
+ * TODO
  *
  * ./gradlew run --args=" /
  *              --inputFile=gs://apache-beam-samples/shakespeare/* /
