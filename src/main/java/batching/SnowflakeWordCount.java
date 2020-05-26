@@ -31,20 +31,7 @@ import org.apache.beam.sdk.values.PDone;
 /**
  * An example that contains batch writing and reading from Snowflake. Inspired by Apache Beam/WordCount-example(https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
  *
- * An example consists of two piplines:
- * a) Writing into Snowflake
- * b) Reading from Snowflake
- *
- * The flow of writing into Snowflake is following:
- * 1. Reading provided files
- * 2. Counting words
- * 3. Writing counts into Snowflake
- *
- * The flow of reading from Snowflake is following:
- * 1. Reading counts from Snowflake
- * 2. Writing counts into output
- *
- * Check main README for executing
+ * Check main README for more information.
  */
 public class SnowflakeWordCount {
 

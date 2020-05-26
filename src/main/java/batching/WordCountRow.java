@@ -2,9 +2,6 @@ package batching;
 
 import java.io.Serializable;
 
-/**
- * TODO
- */
 public class WordCountRow implements Serializable {
     private String word;
     private Long count;
