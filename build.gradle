@@ -1,0 +1,32 @@
+plugins {
+    id 'application'
+}
+
+group 'com.polidea'
+version '1.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+apply plugin : "java"
+ext {
+    javaMainClass = "batching.SnowflakeWordCount"
+}
+
+application {
+    mainClassName = javaMainClass
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile files('beam-sdks-java-io-snowflake-2.19.0-SNAPSHOT-30.04.2020.jar')
+    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version:'2.19.0'
+    compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.19.0'
+
+}
