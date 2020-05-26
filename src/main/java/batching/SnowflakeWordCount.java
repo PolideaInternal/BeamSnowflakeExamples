@@ -44,24 +44,7 @@ import org.apache.beam.sdk.values.PDone;
  * 1. Reading counts from Snowflake
  * 2. Writing counts into output
  *
- * TODO
- *
- * ./gradlew run --args=" /
- *              --inputFile=gs://apache-beam-samples/shakespeare/* /
- *              --output=gs://beam-snowflake-test/counts  /
- *              --serverName=<SNOWFLAKE SERVER NAME>  /
- *              --username=<SNOWFLAKE USERNAME>  /
- *              --password=<SNOWFLAKE PASSWORD> /
- *              --database=<SNOWFLAKE DATABASE> /
- *              --schema=<SNOWFLAKE SCHEMA>  /
- *              --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> /
- *              --stagingBucketName=<GCS BUCKET NAME> /
- *              --runner=<DirectRunner/DataflowRunner> /
- *              --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> /
- *              --gcpTempLocation=<FOR DATAFLOW RUNNER: GCS TEMP LOCATION STARTING> /
- *              --region=<FOR DATAFLOW RUNNER: GCP REGION> /
- *              --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
- *
+ * Check main README for executing
  */
 public class SnowflakeWordCount {
 

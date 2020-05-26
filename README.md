@@ -31,7 +31,37 @@ with Google Cloud Platform as a cloud provider.
 10. Run one of the provided examples.
 
 #### Batching example
+An example that contains batch writing and reading from Snowflake. Inspired by [Apache Beam/WordCount-example](https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
 
+1. Run batching example by executing following command:
+    ```
+    ./gradlew run --args=" /
+        --inputFile=gs://apache-beam-samples/shakespeare/ /
+        --output=gs://<GCS BUCKET NAME>/counts  /
+        --serverName=<SNOWFLAKE SERVER NAME>  /
+        --username=<SNOWFLAKE USERNAME>  /
+        --password=<SNOWFLAKE PASSWORD> /
+        --database=<SNOWFLAKE DATABASE> /
+        --schema=<SNOWFLAKE SCHEMA>  /
+        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> /
+        --stagingBucketName=<GCS BUCKET NAME> /
+        --runner=<DirectRunner/DataflowRunner> /
+        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> /
+        --gcpTempLocation=<FOR DATAFLOW RUNNER: GCS TEMP LOCATION STARTING> /
+        --region=<FOR DATAFLOW RUNNER: GCP REGION> /
+        --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
+    ```
+2. Go to Snowflake console to check saved counts
+    ```
+    select * from <DATABASE NAME>.<SCHEMA NAME>.WORD_COUNT;
+    ```
+    ![Batching snowflake result](./images/batching_snowflake_result.png) 
+3. Go to GCS bucket to check saved files
+    ![Batching gcs result](./images/batching_gcs_result.png) 
+4. Go to DataFlow to check submitted jobs
+    ![Batching DataFlow result](./images/batching_dataflow_result.png) 
+    
+    
 #### Streaming example
 
 #### Cross-language example
