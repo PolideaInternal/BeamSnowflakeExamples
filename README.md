@@ -3,10 +3,16 @@
 This repository contains examples of using [Snowflake](https://www.snowflake.com/) with [Apache Beam](https://github.com/apache/beam).
 Precisely contains batching, streaming and cross-language usage examples.  
 
+### Table of Contents 
+1. [Setup required by all examples](#setup-required-by-all-examples)  
+2. [Batching example](#batching-example) 
+3. [Streaming example](#streaming-example)
+4. [Cross-language example](#cross-language-example)
+
 ### Setup required by all examples:
 1. [Create Snowflake Account](https://trial.snowflake.com/?utm_cta=website-homepage-hero-free-trial&_ga=2.199198959.1328097007.1590138521-373661872.1583847959) 
 with Google Cloud Platform as a cloud provider.
-2. Make sure that your default role for your username is set to ACCOUNTADMIN
+2. Make sure that your default role for your username is set to 1ACCOUNTADMIN
     ```
     alter user <USERNAME> set default_role=ACCOUNTADMIN; 
     ```
@@ -45,7 +51,7 @@ An example consists of two pipelines:
 #### Executing:  
 1. Run batching example by executing following command:
     ```
-    ./gradlew run --args=" /
+    ./gradlew run -PmainClass=batching.WordCountExample --args=" /
         --inputFile=gs://apache-beam-samples/shakespeare/ /
         --output=gs://<GCS BUCKET NAME>/counts  /
         --serverName=<SNOWFLAKE SERVER NAME>  /
@@ -64,7 +70,7 @@ An example consists of two pipelines:
     ```
 2. Go to Snowflake console to check saved counts:
     ```
-    select  from <DATABASE NAME>.<SCHEMA NAME>.WORD_COUNT;
+    select  from <DATABASE NAME>.<SCHEMA NAME>.<TABLE NAME>;
     ```
     ![Batching snowflake result](./images/batching_snowflake_result.png) 
 3. Go to GCS bucket to check saved files:
@@ -74,5 +80,62 @@ An example consists of two pipelines:
     
     
 ### Streaming example
+An example is streaming taxi rides from PubSub into Snowflake.
 
+#### Extra setup: 
+1. [Create Snowflake table](https://docs.snowflake.com/en/sql-reference/sql/create-table.html) which will be holding taxi rides
+    ```
+   create or replace table <TABLE NAME> (
+        ride_id string ,
+        long string ,
+        lat string
+   );
+    ```
+2. [Create Snowflake stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
+    ```
+    create or replace stage <STAGE NAME>
+    url = 'gcs://<GCS BUCKET NAME>/data/'
+    storage_integration = <INTEGRATION NAME>;
+    ```
+3. [Create Key/Pair](https://docs.snowflake.com/en/user-guide/snowsql-start.html#using-key-pair-authentication)
+4. Set public key for user by executing following command:
+    ```
+    alter user <USERNAME> set rsa_public_key='';
+    ```
+5. Create Snowflake [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html)
+    ```
+    CREATE OR REPLACE PIPE <DATABASE NAME>.<SCHEMA NAME>.<PIPE NAME>
+    AS COPY INTO <TABLE NAME> from @<STAGE NAME>;
+    ```
+   
+        
+#### Executing:  
+1. Run streaming example by executing following command:
+    ```
+   ./gradlew run -PmainClass=streaming.TaxiRidesExample --args=" /
+        --serverName=<SNOWFLAKE SERVER NAME>  /
+        --username=<SNOWFLAKE USERNAME>  /
+        --privateKeyPath=<> /
+        --privateKeyPassphrase=<> /
+        --database=<SNOWFLAKE DATABASE> /
+        --schema=<SNOWFLAKE SCHEMA>  /
+        --snowPipe=<SNOWFLAKE SNOWPIPE NAME> /
+        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> /
+        --stagingBucketName=<GCS BUCKET NAME> /
+        --runner=<DirectRunner/DataflowRunner> /
+        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> /
+        --region=<FOR DATAFLOW RUNNER: GCP REGION> /
+        --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
+    ```
+2. Go to Snowflake console to check saved taxi rides:
+    ```
+    select  from <DATABASE NAME>.<SCHEMA NAME>.<TABLE NAME>;
+    ```
+    ![Streaming snowflake result](./images/streaming_snowflake_result.png) 
+3. Go to GCS bucket to check saved files:
+    ![Streaming gcs result](./images/streaming_gcs_result.png) 
+4. Go to DataFlow to check submitted jobs:
+    ![Streaming DataFlow result](./images/streaming_dataflow_result.png) 
+    
+    
 ### Cross-language example

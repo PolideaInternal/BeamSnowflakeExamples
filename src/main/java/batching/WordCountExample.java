@@ -1,6 +1,5 @@
 package batching;
 
-import common.SnowflakeWordCountOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.io.TextIO;
@@ -33,7 +32,7 @@ import org.apache.beam.sdk.values.PDone;
  *
  * Check main README for more information.
  */
-public class SnowflakeWordCount {
+public class WordCountExample {
 
     public static void main(String[] args) {
         SnowflakeWordCountOptions options =
@@ -100,7 +99,7 @@ public class SnowflakeWordCount {
                 .withCoder(SerializableCoder.of(WordCountRow.class));
     }
 
-    private static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakeWordCountOptions options) {
+    public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakeWordCountOptions options) {
         return SnowflakeIO.DataSourceConfiguration.create(SnowflakeCredentialsFactory.of(options))
                 .withDatabase(options.getDatabase())
                 .withServerName(options.getServerName())

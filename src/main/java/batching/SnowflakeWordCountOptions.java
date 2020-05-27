@@ -1,4 +1,4 @@
-package common;
+package batching;
 
 import org.apache.beam.sdk.io.snowflake.SnowflakePipelineOptions;
 import org.apache.beam.sdk.options.Default;

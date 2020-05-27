@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
 }
 
 group 'com.polidea'
@@ -10,13 +10,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-apply plugin : "java"
-ext {
-    javaMainClass = "batching.SnowflakeWordCount"
-}
+task run(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
 
-application {
-    mainClassName = javaMainClass
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "streaming.TaxiRidesExample"
 }
 
 repositories {
