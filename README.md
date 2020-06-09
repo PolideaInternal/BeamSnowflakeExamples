@@ -29,7 +29,7 @@ with Google Cloud Platform as a cloud provider.
     TYPE = EXTERNAL_STAGE
     STORAGE_PROVIDER = GCS
     ENABLED = TRUE
-    STORAGE_ALLOWED_LOCATIONS = ('gcs://<BUCKET NAME>');
+    STORAGE_ALLOWED_LOCATIONS = ('gcs://<BUCKET NAME>/');
     ```
    Please note that `gcs` prefix is used here, not `gs`.
 8. Authorize Snowflake to operate on your bucket by following [Step 3. Grant the Service Account Permissions to Access Bucket Objects](https://docs.snowflake.com/en/user-guide/data-load-gcs-config.html#step-3-grant-the-service-account-permissions-to-access-bucket-objects)
@@ -51,21 +51,21 @@ An example consists of two pipelines:
 #### Executing:  
 1. Run batching example by executing following command:
     ```
-    ./gradlew run -PmainClass=batching.WordCountExample --args=" /
-        --inputFile=gs://apache-beam-samples/shakespeare/ /
-        --output=gs://<GCS BUCKET NAME>/counts  /
-        --serverName=<SNOWFLAKE SERVER NAME>  /
-        --username=<SNOWFLAKE USERNAME>  /
-        --password=<SNOWFLAKE PASSWORD> /
-        --database=<SNOWFLAKE DATABASE> /
-        --schema=<SNOWFLAKE SCHEMA>  /
-        --tableName=<SNOWFLAKE TABLE NAME>  /
-        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> /
-        --stagingBucketName=<GCS BUCKET NAME> /
-        --runner=<DirectRunner/DataflowRunner> /
-        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> /
-        --gcpTempLocation=<FOR DATAFLOW RUNNER: GCS TEMP LOCATION STARTING> /
-        --region=<FOR DATAFLOW RUNNER: GCP REGION> /
+    ./gradlew run -PmainClass=batching.WordCountExample --args="
+        --inputFile=gs://apache-beam-samples/shakespeare/*
+        --output=gs://<GCS BUCKET NAME>/counts
+        --serverName=<SNOWFLAKE SERVER NAME>
+        --username=<SNOWFLAKE USERNAME>
+        --password=<SNOWFLAKE PASSWORD>
+        --database=<SNOWFLAKE DATABASE>
+        --schema=<SNOWFLAKE SCHEMA>  
+        --tableName=<SNOWFLAKE TABLE NAME>  
+        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> 
+        --stagingBucketName=<GCS BUCKET NAME> 
+        --runner=<DirectRunner/DataflowRunner>
+        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> 
+        --gcpTempLocation=<FOR DATAFLOW RUNNER: GCS TEMP LOCATION STARTING> 
+        --region=<FOR DATAFLOW RUNNER: GCP REGION> 
         --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
     ```
 2. Go to Snowflake console to check saved counts:
@@ -112,19 +112,19 @@ for authentication process.
 #### Executing:  
 1. Run streaming example by executing following command:
     ```
-   ./gradlew run -PmainClass=streaming.TaxiRidesExample --args=" /
-        --serverName=<SNOWFLAKE SERVER NAME>  /
-        --username=<SNOWFLAKE USERNAME>  /
-        --privateKeyPath=<> /
-        --privateKeyPassphrase=<> /
-        --database=<SNOWFLAKE DATABASE> /
-        --schema=<SNOWFLAKE SCHEMA>  /
-        --snowPipe=<SNOWFLAKE SNOWPIPE NAME> /
-        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME> /
-        --stagingBucketName=<GCS BUCKET NAME> /
-        --runner=<DirectRunner/DataflowRunner> /
-        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> /
-        --region=<FOR DATAFLOW RUNNER: GCP REGION> /
+   ./gradlew run -PmainClass=streaming.TaxiRidesExample --args="
+        --serverName=<SNOWFLAKE SERVER NAME>
+        --username=<SNOWFLAKE USERNAME>
+        --privateKeyPath=<>
+        --privateKeyPassphrase=<> 
+        --database=<SNOWFLAKE DATABASE>
+        --schema=<SNOWFLAKE SCHEMA> 
+        --snowPipe=<SNOWFLAKE SNOWPIPE NAME>
+        --storageIntegration=<SNOWFLAKE STORAGE INTEGRATION NAME>
+        --stagingBucketName=<GCS BUCKET NAME>
+        --runner=<DirectRunner/DataflowRunner>
+        --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME>
+        --region=<FOR DATAFLOW RUNNER: GCP REGION>
         --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
     ```
 2. Go to Snowflake console to check saved taxi rides:
