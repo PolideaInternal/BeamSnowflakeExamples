@@ -22,8 +22,9 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile files('beam-sdks-java-io-snowflake-2.19.0-SNAPSHOT-30.04.2020.jar')
-    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version:'2.19.0'
-    compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.19.0'
+    compile files('beam-sdks-java-io-snowflake-2.21.0-SNAPSHOT-05.06.2020.jar')
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: '2.21.0'
+    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: '2.21.0'
+    compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.21.0'
 
 }

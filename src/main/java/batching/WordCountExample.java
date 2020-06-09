@@ -6,10 +6,9 @@ import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.snowflake.Location;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
 import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
-import org.apache.beam.sdk.io.snowflake.data.SFColumn;
-import org.apache.beam.sdk.io.snowflake.data.SFTableSchema;
-import org.apache.beam.sdk.io.snowflake.data.numeric.SFNumber;
-import org.apache.beam.sdk.io.snowflake.data.text.SFString;
+import org.apache.beam.sdk.io.snowflake.data.SnowflakeColumn;
+import org.apache.beam.sdk.io.snowflake.data.SnowflakeTableSchema;
+import org.apache.beam.sdk.io.snowflake.data.text.SnowflakeString;
 import org.apache.beam.sdk.io.snowflake.enums.CreateDisposition;
 import org.apache.beam.sdk.io.snowflake.enums.WriteDisposition;
 import org.apache.beam.sdk.metrics.Counter;
@@ -79,9 +78,9 @@ public class WordCountExample {
                 .via(location)
                 .withCreateDisposition(CreateDisposition.CREATE_IF_NEEDED)
                 .withTableSchema(
-                        SFTableSchema.of(
-                                SFColumn.of("word", SFString.of()),
-                                SFColumn.of("count", SFNumber.of())));
+                        SnowflakeTableSchema.of(
+                                SnowflakeColumn.of("word", SnowflakeString.of()),
+                                SnowflakeColumn.of("count", SnowflakeString.of())));
     }
 
     private static PTransform<PBegin, PCollection<WordCountRow>> createSnowflakeReadTransform(SnowflakeWordCountOptions options) {
