@@ -39,7 +39,12 @@ with Google Cloud Platform as a cloud provider.
    Please note that `gcs` prefix is used here, not `gs`.
 9. Authorize Snowflake to operate on your bucket by following [Step 3. Grant the Service Account Permissions to Access Bucket Objects](https://docs.snowflake.com/en/user-guide/data-load-gcs-config.html#step-3-grant-the-service-account-permissions-to-access-bucket-objects)
 10. Setup gcloud on your computer by following [Using the Google Cloud SDK installer](https://cloud.google.com/sdk/docs/downloads-interactive)
-11. Run one of the provided examples.
+11. [Install gradle](https://gradle.org/install/)
+12. Run following command to set gradle wrapper
+    ```
+    gradle wrapper
+    ```
+13. Run one of the provided examples.
 
 ### Batching example
 An example contains batch writing into Snowflake and batch reading from Snowflake. Inspired by [Apache Beam/WordCount-example](https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java).
