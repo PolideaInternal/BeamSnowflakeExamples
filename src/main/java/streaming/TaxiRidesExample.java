@@ -43,8 +43,9 @@ public class TaxiRidesExample {
                                 .withDataSourceConfiguration(dataSourceConfiguration)
                                 .withUserDataMapper(getStreamingCsvMapper())
                                 .withSnowPipe(options.getSnowPipe())
-                                .withFlushTimeLimit(Duration.millis(30000))
-                                .withFlushRowLimit(500000)
+                                .withFlushTimeLimit(Duration.millis(3000))
+                                .withFlushRowLimit(100)
+                                .withQuotationMark("")
                                 .withShardsNumber(1));
 
         p.run().waitUntilFinish();
@@ -64,9 +65,9 @@ public class TaxiRidesExample {
                     JsonObject jo = (JsonObject) jsonParser.parse(recordLine);
 
                     return new String[]{
-                            jo.get("ride_id").toString(),
-                            jo.get("latitude").toString(),
-                            jo.get("longitude").toString()
+                            jo.get("ride_id").getAsString(),
+                            String.valueOf(jo.get("latitude").getAsDouble()),
+                            String.valueOf(jo.get("longitude").getAsDouble())
                     };
                 };
     }

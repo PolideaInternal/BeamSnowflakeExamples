@@ -97,8 +97,8 @@ An example is streaming taxi rides from PubSub into Snowflake.
     ```
    create or replace table <TABLE NAME> (
         ride_id string ,
-        long string ,
-        lat string
+        long double ,
+        lat double
    );
     ```
 2. [Create Snowflake stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
@@ -107,6 +107,7 @@ An example is streaming taxi rides from PubSub into Snowflake.
     url = 'gcs://<GCS BUCKET NAME>/data/'
     storage_integration = <INTEGRATION NAME>;
     ```
+   note: SnowflakeIO requires that url must have /data/ as a sufix 
 3. [Create Key/Pair](https://docs.snowflake.com/en/user-guide/snowsql-start.html#using-key-pair-authentication)
 for authentication process.
 4. Set public key for user by executing following command:
