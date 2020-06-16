@@ -45,7 +45,6 @@ public class TaxiRidesExample {
                                 .withSnowPipe(options.getSnowPipe())
                                 .withFlushTimeLimit(Duration.millis(3000))
                                 .withFlushRowLimit(100)
-                                .withQuotationMark("")
                                 .withShardsNumber(1));
 
         p.run().waitUntilFinish();
