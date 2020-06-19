@@ -28,6 +28,7 @@ dependencies {
     compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.21.0'
 
 }
+
 task execute (type:JavaExec) {
     main = System.getProperty("mainClass")
     classpath = sourceSets.main.runtimeClasspath

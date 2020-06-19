@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
-import org.apache.beam.sdk.io.snowflake.Location;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakePipelineOptions;
 import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
@@ -28,8 +27,6 @@ public class TaxiRidesExample {
 
         Pipeline p = Pipeline.create(options);
 
-        Location location = Location.of(options);
-
         SnowflakeIO.DataSourceConfiguration dataSourceConfiguration = createSnowflakeConfiguration(options);
 
         p.apply("Reading from PubSub",
@@ -39,7 +36,8 @@ public class TaxiRidesExample {
                 .apply(
                         "Writing into Snowflake",
                         SnowflakeIO.<String>write()
-                                .via(location)
+                                .withStagingBucketName(options.getStagingBucketName())
+                                .withStorageIntegrationName(options.getStorageIntegrationName())
                                 .withDataSourceConfiguration(dataSourceConfiguration)
                                 .withUserDataMapper(getStreamingCsvMapper())
                                 .withSnowPipe(options.getSnowPipe())

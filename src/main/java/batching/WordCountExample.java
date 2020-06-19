@@ -3,7 +3,6 @@ package batching;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.io.TextIO;
-import org.apache.beam.sdk.io.snowflake.Location;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
 import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
 import org.apache.beam.sdk.io.snowflake.data.SnowflakeColumn;
@@ -38,7 +37,7 @@ public class WordCountExample {
                 PipelineOptionsFactory.fromArgs(args).withValidation().as(SnowflakeWordCountOptions.class);
 
         runWritingToSnowflake(options);
-        runReadingFromSnowflake(options);
+//        runReadingFromSnowflake(options);
     }
 
 
@@ -49,7 +48,7 @@ public class WordCountExample {
                 .apply("Counting words", new CountWords())
                 .apply("Writing counts to Snowflake", createSnowflakeWriteTransform(options));
 
-        p.run().waitUntilFinish();
+        p.run();
     }
 
     private static void runReadingFromSnowflake(SnowflakeWordCountOptions options) {
@@ -63,7 +62,6 @@ public class WordCountExample {
     }
 
     private static PTransform<PCollection<WordCountRow>, PDone> createSnowflakeWriteTransform(SnowflakeWordCountOptions options) {
-        Location location = Location.of(options);
 
         SnowflakeIO.DataSourceConfiguration dataSourceConfiguration = createSnowflakeConfiguration(options);
 
@@ -74,8 +72,9 @@ public class WordCountExample {
                 .withDataSourceConfiguration(dataSourceConfiguration)
                 .withWriteDisposition(WriteDisposition.TRUNCATE)
                 .withUserDataMapper(userDataMapper)
-                .to(options.getTableName())
-                .via(location)
+                .toTable(options.getTableName())
+                .withStorageIntegrationName(options.getStorageIntegrationName())
+                .withStagingBucketName(options.getStagingBucketName())
                 .withCreateDisposition(CreateDisposition.CREATE_IF_NEEDED)
                 .withTableSchema(
                         SnowflakeTableSchema.of(
@@ -84,7 +83,6 @@ public class WordCountExample {
     }
 
     private static PTransform<PBegin, PCollection<WordCountRow>> createSnowflakeReadTransform(SnowflakeWordCountOptions options) {
-        Location location = Location.of(options);
         SnowflakeIO.DataSourceConfiguration dataSourceConfiguration = createSnowflakeConfiguration(options);
 
         SnowflakeIO.CsvMapper<WordCountRow> csvMapper = (SnowflakeIO.CsvMapper<WordCountRow>)
@@ -93,7 +91,8 @@ public class WordCountExample {
         return SnowflakeIO.<WordCountRow>read()
                 .withDataSourceConfiguration(dataSourceConfiguration)
                 .fromTable(options.getTableName())
-                .via(location)
+                .withStagingBucketName(options.getStagingBucketName())
+                .withStorageIntegrationName(options.getStorageIntegrationName())
                 .withCsvMapper(csvMapper)
                 .withCoder(SerializableCoder.of(WordCountRow.class));
     }
