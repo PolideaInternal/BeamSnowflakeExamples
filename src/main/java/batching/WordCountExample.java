@@ -48,7 +48,7 @@ public class WordCountExample {
                 .apply("Counting words", new CountWords())
                 .apply("Writing counts to Snowflake", createSnowflakeWriteTransform(options));
 
-        p.run();
+        p.run().waitUntilFinish();
     }
 
     private static void runReadingFromSnowflake(SnowflakeWordCountOptions options) {
@@ -58,7 +58,7 @@ public class WordCountExample {
                 .apply(MapElements.via(new FormatAsTextFn()))
                 .apply("Writing counts to GCP", TextIO.write().to(options.getOutput()));
 
-        p.run();
+        p.run().waitUntilFinish();
     }
 
     private static PTransform<PCollection<WordCountRow>, PDone> createSnowflakeWriteTransform(SnowflakeWordCountOptions options) {

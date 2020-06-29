@@ -7,7 +7,7 @@ Precisely contains batching, streaming and cross-language usage examples.
 1. [Setup required by all examples](#setup-required-by-all-examples)  
 2. [Batching example](#batching-example) 
 3. [Streaming example](#streaming-example)
-4. [Google Dataflow templates](#google-dataflow-template-examples)
+4. [Google Dataflow templates](#google-dataflow-template-example)
 5. [Cross-language example](#cross-language-example)
 
 ### Setup required by all examples:
@@ -149,7 +149,7 @@ for authentication process.
 4. Go to DataFlow to check submitted jobs:
     ![Streaming DataFlow result](./images/streaming_dataflow_result.png) 
     
-### Google DataFlow template examples
+### Google DataFlow template example
 Google DataFlow is supporting [template creation](https://cloud.google.com/dataflow/docs/guides/templates/overview) which in practice means staging pipelines on Cloud Storage and 
 run them from a variety of environments with ability to pass runtime parameters that are only available during pipeline execution.
 
