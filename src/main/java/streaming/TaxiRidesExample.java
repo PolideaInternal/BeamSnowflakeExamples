@@ -4,13 +4,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
-import org.apache.beam.sdk.io.snowflake.Location;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakePipelineOptions;
 import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.ToString;
 import org.joda.time.Duration;
+
+import java.util.UUID;
 
 /**
  * An example is streaming taxi rides from PubSub into Snowflake.
@@ -28,8 +29,6 @@ public class TaxiRidesExample {
 
         Pipeline p = Pipeline.create(options);
 
-        Location location = Location.of(options);
-
         SnowflakeIO.DataSourceConfiguration dataSourceConfiguration = createSnowflakeConfiguration(options);
 
         p.apply("Reading from PubSub",
@@ -39,16 +38,18 @@ public class TaxiRidesExample {
                 .apply(
                         "Writing into Snowflake",
                         SnowflakeIO.<String>write()
-                                .via(location)
+                                .withStagingBucketName(options.getStagingBucketName())
+                                .withStorageIntegrationName(options.getStorageIntegrationName())
                                 .withDataSourceConfiguration(dataSourceConfiguration)
                                 .withUserDataMapper(getStreamingCsvMapper())
                                 .withSnowPipe(options.getSnowPipe())
+                                .withFileNameTemplate(UUID.randomUUID().toString())
                                 .withFlushTimeLimit(Duration.millis(3000))
+                                .withDebugMode(SnowflakeIO.StreamingLogLevel.INFO)
                                 .withFlushRowLimit(100)
-                                .withQuotationMark("")
                                 .withShardsNumber(1));
 
-        p.run().waitUntilFinish();
+        p.run();
     }
 
     public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakePipelineOptions options) {

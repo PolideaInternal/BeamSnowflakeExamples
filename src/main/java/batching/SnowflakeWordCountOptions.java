@@ -21,10 +21,4 @@ public interface SnowflakeWordCountOptions extends SnowflakePipelineOptions {
     String getOutput();
 
     void setOutput(String value);
-
-    @Description("Snowflake table name")
-    @Default.String("WORD_COUNT")
-    String getTableName();
-
-    void setTableName(String tableName);
 }
