@@ -6,7 +6,6 @@ import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakePipelineOptions;
-import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.ToString;
 import org.joda.time.Duration;
@@ -53,8 +52,10 @@ public class TaxiRidesExample {
     }
 
     public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakePipelineOptions options) {
-        return SnowflakeIO.DataSourceConfiguration.create(SnowflakeCredentialsFactory.of(options))
+        return SnowflakeIO.DataSourceConfiguration.create()
+                .withKeyPairRawAuth(options.getUsername(), options.getRawPrivateKey(), options.getPrivateKeyPassphrase())
                 .withDatabase(options.getDatabase())
+                .withWarehouse(options.getWarehouse())
                 .withServerName(options.getServerName())
                 .withSchema(options.getSchema());
     }

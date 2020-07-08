@@ -4,7 +4,6 @@ import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
-import org.apache.beam.sdk.io.snowflake.credentials.SnowflakeCredentialsFactory;
 import org.apache.beam.sdk.io.snowflake.data.SnowflakeColumn;
 import org.apache.beam.sdk.io.snowflake.data.SnowflakeTableSchema;
 import org.apache.beam.sdk.io.snowflake.data.text.SnowflakeString;
@@ -98,7 +97,10 @@ public class WordCountExample {
     }
 
     public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakeWordCountOptions options) {
-        return SnowflakeIO.DataSourceConfiguration.create(SnowflakeCredentialsFactory.of(options))
+        return SnowflakeIO.DataSourceConfiguration.create()
+                .withUsernamePasswordAuth(options.getUsername(), options.getPassword())
+                .withOAuth(options.getOauthToken())
+                .withKeyPairRawAuth(options.getUsername(), options.getRawPrivateKey(), options.getPrivateKeyPassphrase())
                 .withDatabase(options.getDatabase())
                 .withServerName(options.getServerName())
                 .withSchema(options.getSchema());

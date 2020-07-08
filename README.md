@@ -198,6 +198,8 @@ list for currently supported runtime options.
 * --username= required for username/password and Private Key authentication.
 * --password= required for username/password authentication only
 * --stagingBucketName= external bucket path ending with `/`. I.e. `gs://bucket/`. Sub-directories are allowed.
+* --rawPrivateKey= raw private key. Required for Private Key authentication only.
+* --privateKeyPassphrase= private Key's passphrase. Required for Private Key authentication only.
 * --storageIntegrationName= storage integration name
 * --warehouse= warehouse to use. Optional.
 * --database= database name to connect to. Optional.
@@ -211,7 +213,6 @@ list for currently supported runtime options.
 * --url= Snowflake's JDBC-like url including account name and region without any parameters.
 * --oauthToken= required for OAuth authentication only.
 * --privateKeyPath=: path to Private Key file. Required for Private Key authentication only.
-* --privateKeyPassphrase= private Key's passphrase. Required for Private Key authentication only.
 * --authenticator= authenticator to use. Optional.
 * --portNumber= port number. Optional.
 * --loginTimeout= login timeout. Optional.
