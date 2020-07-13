@@ -23,15 +23,17 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile files('beam-sdks-java-io-snowflake-2.22.0-SNAPSHOT.jar')
-    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: '2.21.0'
-    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: '2.21.0'
-    compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.21.0'
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: '2.22.0'
+    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: '2.22.0'
+    compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.22.0'
 }
 
 task execute (type:JavaExec) {
     main = System.getProperty("mainClass")
     classpath = sourceSets.main.runtimeClasspath
     systemProperties System.getProperties()
-    args System.getProperty("exec.args").split()
+    if (System.hasProperty("exec.args")) {
+        args System.getProperty("exec.args").split()
+    }
 }
 
