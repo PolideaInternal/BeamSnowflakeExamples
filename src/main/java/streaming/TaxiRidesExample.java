@@ -54,6 +54,7 @@ public class TaxiRidesExample {
     public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakePipelineOptions options) {
         return SnowflakeIO.DataSourceConfiguration.create()
                 .withKeyPairRawAuth(options.getUsername(), options.getRawPrivateKey(), options.getPrivateKeyPassphrase())
+                .withKeyPairPathAuth(options.getUsername(), options.getPrivateKeyPath(), options.getPrivateKeyPassphrase())
                 .withDatabase(options.getDatabase())
                 .withWarehouse(options.getWarehouse())
                 .withServerName(options.getServerName())
