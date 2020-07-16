@@ -32,7 +32,7 @@ task execute (type:JavaExec) {
     main = System.getProperty("mainClass")
     classpath = sourceSets.main.runtimeClasspath
     systemProperties System.getProperties()
-    if (System.hasProperty("exec.args")) {
+    if (System.getProperty("exec.args") != null) {
         args System.getProperty("exec.args").split()
     }
 }

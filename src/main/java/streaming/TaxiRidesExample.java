@@ -46,6 +46,7 @@ public class TaxiRidesExample {
                                 .withFlushTimeLimit(Duration.millis(3000))
                                 .withDebugMode(SnowflakeIO.StreamingLogLevel.INFO)
                                 .withFlushRowLimit(100)
+                                .withQuotationMark("")
                                 .withShardsNumber(1));
 
         p.run();
