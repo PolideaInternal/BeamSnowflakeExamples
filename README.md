@@ -187,9 +187,37 @@ list for currently supported runtime options.
         ![DataFlow console template](./images/dataflow_console_template.png)
     4. Fill up the `Temporary location` input
         ![DataFlow console temporary location](./images/dataflow_console_temporary.png)
-    5. Fill up the chosen runtime options(serverName and snowPipe in this case) and run job.
+    5. Add missing runtime options by adding additional parameters or by creating metadata file:
+        * Add additional parameters which in our case are serverName and snowPipe
         ![DataFlow console runtime options](./images/dataflow_console_runtime_options.png)
-    6. Wait a little for results
+        * Create [metadata file for template](https://cloud.google.com/dataflow/docs/guides/templates/creating-templates#metadata) 
+        and store it in the same folder as the template with convention `<template-name>_metadata`
+        Example:
+            ```
+            {
+                "name": "NYC Taxi Pipeline Example",
+                "description": "A sample pipeline that reads from the public NYC Taxi Pub/Sub subscription and writes to a Snowflake table",
+                "parameters": [
+                {
+                    "name": "serverName",
+                    "label": "Snowflake server name",
+                    "helpText": "Full Snowflake server name including domain, e.g. account.us-central1.gcp.snowflakecomputing.com",
+                    "regexes": [
+                        "[a-zA-Z0-9_.]+\\.snowflakecomputing.com"
+                    ],
+                    "paramType": "TEXT"
+                },
+                {
+                    "name": "snowPipe",
+                    "label": "Snowflake pipe used for loading streamed data",
+                    "helpText": "Name of pipe that was created in Snowflake for loading the taxi data into a Snowflake table",
+                    "paramType": "TEXT"
+                }
+                ]
+            }
+            ```
+       ![DataFlow console Snowflake template metadata](./images/dataflow_console_template_metadata.png)  
+    6. Run job and wait a little for results
     7. Check Snowflake console
         ![DataFlow console Snowflake result](./images/dataflow_console_snowflake_result.png)      
  
