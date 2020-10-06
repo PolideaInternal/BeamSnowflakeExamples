@@ -13,6 +13,7 @@ import org.apache.beam.sdk.metrics.Counter;
 import org.apache.beam.sdk.metrics.Distribution;
 import org.apache.beam.sdk.metrics.Metrics;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
+import org.apache.beam.sdk.options.ValueProvider;
 import org.apache.beam.sdk.transforms.Count;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.MapElements;
@@ -23,10 +24,11 @@ import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PBegin;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PDone;
+import util.KMSEncryptedNestedValueProvider;
 
 /**
  * An example that contains batch writing and reading from Snowflake. Inspired by Apache Beam/WordCount-example(https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
- *
+ * <p>
  * Check main README for more information.
  */
 public class WordCountExample {
@@ -98,9 +100,16 @@ public class WordCountExample {
 
     public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakeWordCountOptions options) {
         return SnowflakeIO.DataSourceConfiguration.create()
-                .withUsernamePasswordAuth(options.getUsername(), options.getPassword())
+                .withUsernamePasswordAuth(
+                        maybeDecrypt(options.getUsername(), options.getKMSEncryptionKey()),
+                        maybeDecrypt(options.getPassword(), options.getKMSEncryptionKey())
+                )
                 .withOAuth(options.getOauthToken())
-                .withKeyPairRawAuth(options.getUsername(), options.getRawPrivateKey(), options.getPrivateKeyPassphrase())
+                .withKeyPairRawAuth(
+                        maybeDecrypt(options.getUsername(), options.getKMSEncryptionKey()),
+                        maybeDecrypt(options.getRawPrivateKey(), options.getKMSEncryptionKey()),
+                        maybeDecrypt(options.getPrivateKeyPassphrase(), options.getKMSEncryptionKey())
+                )
                 .withDatabase(options.getDatabase())
                 .withServerName(options.getServerName())
                 .withSchema(options.getSchema());
@@ -152,6 +161,12 @@ public class WordCountExample {
                 }
             }
         }
+    }
+
+    private static ValueProvider<String> maybeDecrypt(
+            ValueProvider<String> unencryptedValue, ValueProvider<String> kmsKey) {
+
+        return new KMSEncryptedNestedValueProvider(unencryptedValue, kmsKey);
     }
 
 }

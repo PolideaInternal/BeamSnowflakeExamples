@@ -54,9 +54,9 @@ An example consists of two pipelines:
 * Writing into Snowflake
     1. Reading files from provided by `inputFile` argument. 
     2. Counting words
-    3. Writing counts into Snowflake table provided by `tableName` argument. 
+    3. Writing counts into Snowflake table provided by `table` argument. 
 * Reading from Snowflake
-  1. Reading counts from Snowflake table provided by `tableName` argument.
+  1. Reading counts from Snowflake table provided by `table` argument.
   2. Writing counts into provided by `output` argument. 
 
 #### Executing:  
@@ -70,7 +70,7 @@ An example consists of two pipelines:
         --password=<SNOWFLAKE PASSWORD> \
         --database=<SNOWFLAKE DATABASE> \
         --schema=<SNOWFLAKE SCHEMA> \
-        --tableName=<SNOWFLAKE TABLE NAME>  \
+        --table=<SNOWFLAKE TABLE NAME>  \
         --storageIntegrationName=<SNOWFLAKE STORAGE INTEGRATION NAME> \
         --stagingBucketName=<GCS BUCKET NAME> \
         --runner=<DirectRunner/DataflowRunner> \
