@@ -5,10 +5,10 @@ import com.google.gson.JsonParser;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.io.snowflake.SnowflakeIO;
-import org.apache.beam.sdk.io.snowflake.SnowflakePipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.ToString;
 import org.joda.time.Duration;
+import util.AwsOptionsParser;
 
 import java.util.UUID;
 
@@ -23,8 +23,10 @@ public class TaxiRidesExample {
     private static final String PUBSUB_TAX_RIDES = "projects/pubsub-public-data/topics/taxirides-realtime";
 
     public static void main(String[] args) {
-        SnowflakePipelineOptions options =
-                PipelineOptionsFactory.fromArgs(args).withValidation().as(SnowflakePipelineOptions.class);
+        TaxiRidesOptions options =
+                PipelineOptionsFactory.fromArgs(args).withValidation().as(TaxiRidesOptions.class);
+
+        AwsOptionsParser.format(options);
 
         Pipeline p = Pipeline.create(options);
 
@@ -44,7 +46,6 @@ public class TaxiRidesExample {
                                 .withSnowPipe(options.getSnowPipe())
                                 .withFileNameTemplate(UUID.randomUUID().toString())
                                 .withFlushTimeLimit(Duration.millis(3000))
-                                .withDebugMode(SnowflakeIO.StreamingLogLevel.INFO)
                                 .withFlushRowLimit(100)
                                 .withQuotationMark("")
                                 .withShardsNumber(1));
@@ -52,7 +53,7 @@ public class TaxiRidesExample {
         p.run();
     }
 
-    public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(SnowflakePipelineOptions options) {
+    public static SnowflakeIO.DataSourceConfiguration createSnowflakeConfiguration(TaxiRidesOptions options) {
         return SnowflakeIO.DataSourceConfiguration.create()
                 .withKeyPairRawAuth(options.getUsername(), options.getRawPrivateKey(), options.getPrivateKeyPassphrase())
                 .withKeyPairPathAuth(options.getUsername(), options.getPrivateKeyPath(), options.getPrivateKeyPassphrase())

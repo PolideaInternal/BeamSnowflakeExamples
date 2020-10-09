@@ -23,10 +23,11 @@ import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PBegin;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PDone;
+import util.AwsOptionsParser;
 
 /**
  * An example that contains batch writing and reading from Snowflake. Inspired by Apache Beam/WordCount-example(https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
- *
+ * <p>
  * Check main README for more information.
  */
 public class WordCountExample {
@@ -35,10 +36,11 @@ public class WordCountExample {
         SnowflakeWordCountOptions options =
                 PipelineOptionsFactory.fromArgs(args).withValidation().as(SnowflakeWordCountOptions.class);
 
+        AwsOptionsParser.format(options);
+
         runWritingToSnowflake(options);
         runReadingFromSnowflake(options);
     }
-
 
     private static void runWritingToSnowflake(SnowflakeWordCountOptions options) {
         Pipeline p = Pipeline.create(options);
