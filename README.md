@@ -28,8 +28,7 @@ with Google Cloud Platform as a cloud provider.
     ```
 5. [Create Google Cloud Platform account](https://cloud.google.com/free).
 6. [Create a new GCP project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-7. [Create GCP bucket](https://cloud.google.com/storage/docs/creating-buckets)
-8. Create storage integration object in Snowflake using the following command:
+7. Depending on using GCS or S3 as file system execute one of the following commands to create storage integration object in Snowflake:
     ```
     CREATE OR REPLACE STORAGE INTEGRATION <INTEGRATION NAME>
     TYPE = EXTERNAL_STAGE
@@ -37,11 +36,21 @@ with Google Cloud Platform as a cloud provider.
     ENABLED = TRUE
     STORAGE_ALLOWED_LOCATIONS = ('gcs://<BUCKET NAME>/');
     ```
+    ```
+    CREATE STORAGE INTEGRATION aws_integration
+    TYPE = EXTERNAL_STAGE
+    STORAGE_PROVIDER = S3
+    ENABLED = TRUE
+    STORAGE_AWS_ROLE_ARN = '<ARN ROLE NAME>'
+    STORAGE_ALLOWED_LOCATIONS = ('s3://<BUCKET NAME>/')
+    ```
    Please note that `gcs` prefix is used here, not `gs`.
-9. Authorize Snowflake to operate on your bucket by following [Step 3. Grant the Service Account Permissions to Access Bucket Objects](https://docs.snowflake.com/en/user-guide/data-load-gcs-config.html#step-3-grant-the-service-account-permissions-to-access-bucket-objects)
-10. Setup gcloud on your computer by following [Using the Google Cloud SDK installer](https://cloud.google.com/sdk/docs/downloads-interactive)
-11. [Install gradle](https://gradle.org/install/)
-12. Run following command to set gradle wrapper
+7. Authorize Snowflake to operate on your bucket
+    1. For GCS follow [Step 3. Grant the Service Account Permissions to Access Bucket Objects](https://docs.snowflake.com/en/user-guide/data-load-gcs-config.html#step-3-grant-the-service-account-permissions-to-access-bucket-objects)
+    1. For S3 follow [Configuring a Snowflake Storage Integration](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html#option-1-configuring-a-snowflake-storage-integration)
+9. Setup gcloud on your computer by following [Using the Google Cloud SDK installer](https://cloud.google.com/sdk/docs/downloads-interactive)
+10. [Install gradle](https://gradle.org/install/)
+11. Run following command to set gradle wrapper
     ```
     gradle wrapper
     ```
@@ -64,7 +73,7 @@ An example consists of two pipelines:
     ```
     ./gradlew run -PmainClass=batching.WordCountExample --args=" \
         --inputFile=gs://apache-beam-samples/shakespeare/* \
-        --output=gs://<GCS BUCKET NAME>/counts \
+        --output=<gs or s3>://<GCS OR S3 BUCKET NAME>/counts \
         --serverName=<SNOWFLAKE SERVER NAME> \
         --username=<SNOWFLAKE USERNAME> \
         --password=<SNOWFLAKE PASSWORD> \
@@ -72,11 +81,14 @@ An example consists of two pipelines:
         --schema=<SNOWFLAKE SCHEMA> \
         --tableName=<SNOWFLAKE TABLE NAME>  \
         --storageIntegrationName=<SNOWFLAKE STORAGE INTEGRATION NAME> \
-        --stagingBucketName=<GCS BUCKET NAME> \
+        --stagingBucketName=<GCS OR S3 BUCKET NAME> \
         --runner=<DirectRunner/DataflowRunner> \
         --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> \
         --gcpTempLocation=<FOR DATAFLOW RUNNER: GCS TEMP LOCATION STARTING> \
         --region=<FOR DATAFLOW RUNNER: GCP REGION> \
+        --awsRegion=<OPTIONAL: AWS REGION IN CASE OF USING S3> \ 
+        --awsAccessKey=<OPTIONAL: AWS ACCESS KEY IN CASE OF USING S3>\
+        --awsSecretKey=<OPTIONAL: AWS SECRET KEY IN CASE OF USING S3>\
         --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
     ```
 2. Go to Snowflake console to check saved counts:
@@ -84,7 +96,7 @@ An example consists of two pipelines:
     select  from <DATABASE NAME>.<SCHEMA NAME>.<TABLE NAME>;
     ```
     ![Batching snowflake result](./images/batching_snowflake_result.png) 
-3. Go to GCS bucket to check saved files:
+3. Go to GCS or S3 bucket to check saved files:
     ![Batching gcs result](./images/batching_gcs_result.png) 
 4. Go to DataFlow to check submitted jobs:
     ![Batching DataFlow result](./images/batching_dataflow_result.png) 
@@ -102,10 +114,15 @@ An example is streaming taxi rides from PubSub into Snowflake.
         lat double
    );
     ```
-2. [Create Snowflake stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
+2. Depending on using GCS or S3 execute one of the following commands to [create Snowflake stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
     ```
     create or replace stage <STAGE NAME>
     url = 'gcs://<GCS BUCKET NAME>/data/'
+    storage_integration = <INTEGRATION NAME>;
+    ```
+    ```
+    create stage <STAGE NAME>
+    url = 'S3://<S3 BUCKET NAME>/data/'
     storage_integration = <INTEGRATION NAME>;
     ```
    note: SnowflakeIO requires that url must have /data/ as a sufix 
@@ -133,10 +150,13 @@ for authentication process.
         --schema=<SNOWFLAKE SCHEMA> \
         --snowPipe=<SNOWFLAKE SNOWPIPE NAME> \
         --storageIntegrationName=<SNOWFLAKE STORAGE INTEGRATION NAME> \
-        --stagingBucketName=<GCS BUCKET NAME> \
+        --stagingBucketName=<GCS OR S3 BUCKET NAME> \
         --runner=<DirectRunner/DataflowRunner> \
         --project=<FOR DATAFLOW RUNNER: GCP PROJECT NAME> \
         --region=<FOR DATAFLOW RUNNER: GCP REGION> \
+        --awsRegion=<OPTIONAL: AWS REGION IN CASE OF USING S3> \ 
+        --awsAccessKey=<OPTIONAL: AWS ACCESS KEY IN CASE OF USING S3>\
+        --awsSecretKey=<OPTIONAL: AWS SECRET KEY IN CASE OF USING S3>\
         --appName=<OPTIONAL: DATAFLOW JOB NAME PREFIX>"
     ```
 2. Go to Snowflake console to check saved taxi rides:
@@ -166,7 +186,7 @@ list for currently supported runtime options.
         --templateLocation=gs://<GCS BUCKET NAME>/templates/<TEMPLATE NAME>\
         --region=<GCP REGION>\  
         --storageIntegrationName=<SNOWFLAKE STORAGE INTEGRATION NAME> \
-        --stagingBucketName=gs://<GCS BUCKET NAME>/ \
+        --stagingBucketName=<gs or s3>://<GCS OR S3 BUCKET NAME>/ \
         --username=<SNOWFLAKE USERNAME>\
         --database=<SNOWFLAKE DATABASE> \
         --schema=<SNOWFLAKE SCHEMA> \
@@ -225,7 +245,7 @@ list for currently supported runtime options.
 * --serverName= full server name with account, zone and domain.
 * --username= required for username/password and Private Key authentication.
 * --password= required for username/password authentication only
-* --stagingBucketName= external bucket path ending with `/`. I.e. `gs://bucket/`. Sub-directories are allowed.
+* --stagingBucketName= external bucket path ending with `/`. I.e. `<gs or s3>://bucket/`. Sub-directories are allowed.
 * --rawPrivateKey= raw private key. Required for Private Key authentication only.
 * --privateKeyPassphrase= private Key's passphrase. Required for Private Key authentication only.
 * --storageIntegrationName= storage integration name
@@ -297,7 +317,7 @@ python -m pip install apachebeam_snowflake.whl
     ```
 2. [Go to Flink console](http://localhost:8081/)
     ![Xlang Flink result](./images/xlang_flink_result.png)
-3. Go to GCS bucket to check saved files:
+3. Go to GCS or S3 bucket to check saved files:
     ![Xlang GCS result](./images/xlang_gcs_result.png)
 4. Check console
     ![Xlang console result](./images/xlang_console_result.png)
