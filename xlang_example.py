@@ -2,6 +2,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.io.external.generate_sequence import GenerateSequence
 from apache_beam.io.external.snowflake import ReadFromSnowflake, WriteToSnowflake
+import logging
 
 SERVER_NAME = <SNOWFLAKE SERVER NAME>
 USERNAME = <SNOWFLAKE USERNAME>
@@ -11,7 +12,6 @@ DATABASE = <SNOWFLAKE DATABASE>
 STAGING_BUCKET_NAME = <SNOWFLAKE STORAGE INTEGRATION NAME>
 STORAGE_INTEGRATION = <SNOWFLAKE STORAGE INTEGRATION NAME>
 TABLE = <SNOWFLAKE TABLE NAME>
-EXPANSION_SERVICE = 'localhost:8097'
 SCHEMA_STRING = """
 {"schema":[
     {"dataType":{"type":"text","length":null},"name":"text_column","nullable":true},
@@ -21,10 +21,11 @@ SCHEMA_STRING = """
 """
 
 OPTIONS =[
-    "--runner=FlinkRunner",
-    "--flink_version=1.10",
-    "--flink_master=localhost:8081",
-    "--environment_type=LOOPBACK"
+    "--runner=DataflowRunner",
+    "--project=<GCP PROJECT ID>",
+    "--staging_location=gs://<BUCKET NAME>/tmp/",
+    "--region=<REGION>",
+    "--temp_location=gs://<BUCKET NAME>/tmp/"
 ]
 
 class Row(object):
@@ -50,7 +51,7 @@ def run_write():
 
     p = beam.Pipeline(options=PipelineOptions(OPTIONS))
     (p
-     | GenerateSequence(start=1, stop=3, expansion_service=EXPANSION_SERVICE)
+     | GenerateSequence(start=1, stop=3)
      | beam.Map(lambda num: Row("test" + str(num), num, True))
      | "Writing into Snowflake" >> WriteToSnowflake(
                 server_name=SERVER_NAME,
@@ -65,8 +66,7 @@ def run_write():
                 table_schema=SCHEMA_STRING,
                 user_data_mapper=user_data_mapper,
                 table=TABLE,
-                query=None,
-                expansion_service=EXPANSION_SERVICE)
+                query=None)
      )
     result = p.run()
     result.wait_until_finish()
@@ -91,18 +91,20 @@ def run_read():
                 schema=SCHEMA,
                 database=DATABASE,
                 staging_bucket_name=STAGING_BUCKET_NAME,
-                storage_integration=STORAGE_INTEGRATION,
+                storage_integration_name=STORAGE_INTEGRATION,
                 csv_mapper=csv_mapper,
-                table=TABLE,
-                expansion_service=EXPANSION_SERVICE)
+                table=TABLE)
      | "Print" >> beam.Map(print_row)
      )
     result = p.run()
     result.wait_until_finish()
 
+
 def run():
-    run_write()
+    # run_write()
     run_read()
 
+
 if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.INFO)
     run()
